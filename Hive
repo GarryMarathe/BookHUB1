@@ -1,0 +1,203 @@
+[cloudera@quickstart ~]$ hive
+
+Logging initialized using configuration in file:/etc/hive/conf.dist/hive-log4j.properties
+WARNING: Hive CLI is deprecated and migration to Beeline is recommended.
+
+CREATE DATABASE
+
+hive> CREATE DATABASE IF NOT EXISTS user2;
+OK
+Time taken: 0.526 seconds
+
+SHOW DATABASE
+
+hive> show databases;
+OK
+default
+user1
+user2
+Time taken: 0.309 seconds, Fetched: 3 row(s)
+
+DROP DATABASE
+
+hive> drop database if exists user1;
+OK
+Time taken: 0.274 seconds
+
+USE DATABASE
+
+
+hive> use user2;
+OK
+Time taken: 0.031 seconds
+
+CREAte TABLE IN HIVE
+hive> CREATE TABLE IF NOT EXISTS employee2(eid int,name String,salary String,designation String)
+    > ROW FORMAT DELIMITED
+    > FIELDS TERMINATED BY ','
+    > LINES TERMINATED BY '\n'
+    > STORED AS TEXTFILE;
+OK
+Time taken: 0.371 seconds
+
+
+
+LOAD DATA FROM FILE INTO TABLE
+
+hive> load data local inpath '/home/cloudera/Downloads/sample_emp.txt' overwrite into table employee2;
+Loading data to table user2.employee2
+
+DISPLAY DATA FROM TABLE
+
+hive> select * from employee2;
+
+ALTER TABLE IN HIVE
+hive> ALTER TABLE employee2 CHANGE name empname String;
+OK
+Time taken: 0.181 seconds
+hive> ALTER TABLE employee2 CHANGE salary salary Double;
+OK
+Time taken: 0.186 seconds
+hive> alter table employee2 add columns (dept string comment'Department Name');
+OK
+Time taken: 0.178 seconds
+
+
+DESCRIBE TABLE IN HIVE
+
+hive> describe employee2;
+
+hive> CREATE TABLE IF NOT EXISTS employee2(eid int,name String,salary String,designation String)
+    > ROW FORMAT DELIMITED
+    > FIELDS TERMINATED BY ','
+    > LINES TERMINATED BY '\n'
+    > STORED AS TEXTFILE;
+OK
+Time taken: 0.021 seconds
+hive> show tables;
+OK
+employee2
+Time taken: 0.045 seconds, Fetched: 1 row(s)
+
+
+DROP TABLE IN HIVE
+
+
+hive> drop table employee1;
+OK
+Time taken: 0.117 seconds
+
+
+
+SHOW TABLE IN HIVE
+
+
+hive> show tables;
+OK
+employee2
+Time taken: 0.018 seconds, Fetched: 1 row(s)
+
+
+
+CREATE EXTERNAL TABLE
+
+[cloudera@quickstart ~]$ hdfs dfs -mkdir /HiveDirectory1
+[cloudera@quickstart ~]$ hdfs dfs -put /home/cloudera/Downloads/sample_emp.txt /HiveDirectory1
+
+
+
+hive> create external table emplist3 (Id int,Name string,Salary float)
+    > row format delimited
+    > fields terminated by ','
+    > location '/HiveDirectory1';
+OK
+Time taken: 0.082 seconds
+hive> select * from emplist3;
+
+
+FLIGHT INFORMATION SYSTEM ANALYSIS USING HIVE
+
+1.CREATE HIVE TABLE.flight_data:
+
+
+hive> CREATE TABLE flight_data(
+    >    year INT,
+    >    month INT,
+    >    day INT,
+    >    day_of_week INT,
+    >    dep_time INT,
+    >    crs_dep_time INT,
+    >    arr_time INT,
+    >    crs_arr_time INT,
+    >    unique_carrier STRING,
+    >    flight_num INT,
+    >    tail_num STRING,
+    >    actual_elapsed_time INT,
+    >    crs_elapsed_time INT,
+    >    air_time INT,
+    >    arr_delay INT,
+    >    dep_delay INT,
+    >    origin STRING,
+    >    dest STRING,
+    >    distance INT,
+    >    taxi_in INT,
+    >    taxi_out INT,
+    >    cancelled INT,
+    >    cancellation_code STRING,
+    >    diverted INT,
+    >    carrier_delay STRING,
+    >    weather_delay STRING,
+    >    nas_delay STRING,
+    >    security_delay STRING,
+    >    late_aircraft_delay STRING
+    > )
+    > ROW FORMAT DELIMITED
+    > FIELDS TERMINATED BY ',';
+OK
+Time taken: 0.127 seconds
+
+
+LOAD DATA INTO TABLE
+
+
+hive> LOAD DATA LOCAL INPATH '/home/cloudera/Downloads/2008.csv' OVERWRITE INTO TABLE flight_data;
+
+hive> select * from flight_data limit 10;
+OK
+
+hive> select avg(arr_delay) from flight_data where month=1 and origin='SFO';
+
+CREATE AIRPORT TABLE
+
+hive> create table airports(name String,country String,area_code INT,code String)
+    > ROW FORMAT DELIMITED
+    > FIELDS TERMINATED BY ',';
+OK
+Time taken: 0.102 seconds
+
+
+LOAD DATA INTO AIRPRT TABLE
+
+
+hive> LOAD DATA LOCAL INPATH '/home/cloudera/Downloads/airports.csv' OVERWRITE INTO TABLE airports;
+Loading data to table default.airports
+Table default.airports stats: [numFiles=1, numRows=0, totalSize=58888, rawDataSize=0]
+OK
+Time taken: 0.346 seconds
+hive> select * from airports limit 10;
+
+JOIN TABLES WITH HIVE
+
+
+hive> select name,avg(arr_delay) from flight_data f inner join airports a on (f.origin=a.code) where month=1 group by name;
+
+FIND AVERAGE DEPARTURE DELAY PER DAY IN 2008 :
+
+
+hive> select day,avg(dep_delay) from flight_data group by day;
+
+CREATE INDEX ON FLIGHT INFORMATION SYSTEM TABLE
+
+hive> create index origin_index on table flight_data (origin) as 'compact' with deferred rebuild;
+OK
+Time taken: 0.507 seconds

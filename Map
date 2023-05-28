@@ -1,0 +1,35 @@
+[cloudera@quickstart ~]$ pwd
+/home/cloudera
+[cloudera@quickstart ~]$ hdfs dfs -mkdir /MRinputfolder3
+[cloudera@quickstart ~]$ hdfs dfs -ls /
+Found 14 items
+drwxr-xr-x   - cloudera supergroup          0 2023-05-27 00:55 /MRinputfolder1
+drwxr-xr-x   - cloudera supergroup          0 2023-05-27 01:17 /MRinputfolder2
+drwxr-xr-x   - cloudera supergroup          0 2023-05-27 01:18 /MRinputfolder3
+drwxr-xr-x   - cloudera supergroup          0 2023-05-27 01:07 /MRoutputfolder1
+drwxrwxrwx   - hdfs     supergroup          0 2017-10-23 09:15 /benchmarks
+drwxr-xr-x   - hbase    supergroup          0 2023-05-26 23:13 /hbase
+drwxr-xr-x   - cloudera supergroup          0 2023-05-26 23:33 /inputfolder1
+drwxr-xr-x   - cloudera supergroup          0 2023-05-27 01:14 /inputfolder2
+drwxr-xr-x   - cloudera supergroup          0 2023-05-27 01:18 /inputfolder3
+drwxr-xr-x   - cloudera supergroup          0 2023-05-26 23:40 /out1
+drwxr-xr-x   - solr     solr                0 2017-10-23 09:18 /solr
+drwxrwxrwt   - hdfs     supergroup          0 2023-05-26 23:13 /tmp
+drwxr-xr-x   - hdfs     supergroup          0 2017-10-23 09:17 /user
+drwxr-xr-x   - hdfs     supergroup          0 2017-10-23 09:17 /var
+[cloudera@quickstart ~]$ hdfs dfs -put /home/cloudera/access_log_short.csv /MRinputfolder3
+
+[cloudera@quickstart ~]$ hdfs dfs -cat /MRinputfolder3/access_log_short.csv
+
+[cloudera@quickstart ~]$ hadoop jar /home/cloudera/MRlogFile.jar mrLogFile_demo.UserLogDriver /MRinputfolder3/access_log_short.csv /MRoutputfolder2 
+
+[cloudera@quickstart ~]$ hdfs dfs -ls /MRoutputfolder2
+Found 2 items
+-rw-r--r--   1 cloudera supergroup          0 2023-05-27 01:22 /MRoutputfolder2/_SUCCESS
+-rw-r--r--   1 cloudera supergroup       3838 2023-05-27 01:22 /MRoutputfolder2/part-00000
+
+[cloudera@quickstart ~]$ hdfs dfs -cat /MRoutputfolder2/part-00000
+
+[cloudera@quickstart ~]$ 
+
+
